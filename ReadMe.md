@@ -1,6 +1,6 @@
 ## Mobile Developer Assignment
 
-Create a simple quiz app from [this reference](http://assignment.tockto.me.s3-website-ap-southeast-1.amazonaws.com).
+Create a simple quiz app using [this reference](http://assignment.tockto.me.s3-website-ap-southeast-1.amazonaws.com).
 
 - Must use Bloc State Management
 - Must have test cases
