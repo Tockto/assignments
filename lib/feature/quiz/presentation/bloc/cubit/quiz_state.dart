@@ -10,12 +10,17 @@ class Initial extends QuizState {}
 class Loading extends QuizState {}
 
 class Loaded extends QuizState {
-  final List<Quiz> listQuiz;
+  final Quiz quiz;
+  List<String> answers;
+  QUIZ_STATUS status;
 
-  Loaded({required this.listQuiz});
+  Loaded(
+      {required this.quiz,
+      required this.answers,
+      this.status = QUIZ_STATUS.EMPTY});
 
   @override
-  List<Object> get props => [listQuiz];
+  List<Object> get props => [quiz, answers];
 }
 
 class Error extends QuizState {

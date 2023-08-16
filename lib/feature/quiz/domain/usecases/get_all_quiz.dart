@@ -3,7 +3,9 @@ import 'package:assignments/core/usecase/usecase.dart';
 import 'package:assignments/feature/quiz/domain/entities/quiz.dart';
 import 'package:assignments/feature/quiz/domain/repositories/quiz_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class GetAllQuizUseCase implements UseCase<List<Quiz>, NoParams> {
   final QuizRepository quizRepository;
   GetAllQuizUseCase(this.quizRepository);

@@ -1,10 +1,9 @@
+import 'package:assignments/core/config/configure_dependencies.dart';
 import 'package:assignments/feature/quiz/presentation/page/quiz_page.dart';
 import 'package:flutter/material.dart';
-import 'injection_container.dart' as di;
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await di.init();
+Future<void> main() async {
+  await configureDependencies();
   runApp(const MyApp());
 }
 

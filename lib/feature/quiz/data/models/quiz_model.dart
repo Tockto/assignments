@@ -6,14 +6,32 @@ class QuizModel extends Quiz {
   final List<String> choices;
   final List<int> solutions;
 
-  const QuizModel(this.text, this.choices, this.solutions)
+  QuizModel(
+      {required this.text, required this.choices, required this.solutions})
       : super(text, choices, solutions);
 
-  factory QuizModel.fromJson(Map<String, dynamic> json) => QuizModel(
-        json[ConstKeys.quizText] as String,
-        json[ConstKeys.quizChoices] as List<String>,
-        json[ConstKeys.quizChoices] as List<int>,
-      );
+  factory QuizModel.fromJson(Map<String, dynamic> json) {
+    List<String> listChoices = [];
+    List<int> listSolutions = [];
+
+    if (json[ConstKeys.quizChoices] != null) {
+      for (String choice in json[ConstKeys.quizChoices]) {
+        listChoices.add(choice);
+      }
+    }
+
+    if (json[ConstKeys.quizSolutions] != null) {
+      for (int solution in json[ConstKeys.quizSolutions]) {
+        listSolutions.add(solution);
+      }
+    }
+
+    return QuizModel(
+      text: json[ConstKeys.quizText] as String,
+      choices: listChoices,
+      solutions: listSolutions,
+    );
+  }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         ConstKeys.quizText: this.text,
