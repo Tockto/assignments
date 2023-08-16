@@ -13,11 +13,13 @@ class Loaded extends QuizState {
   final Quiz quiz;
   List<String> answers;
   QUIZ_STATUS status;
+  final bool validate;
 
   Loaded(
       {required this.quiz,
       required this.answers,
-      this.status = QUIZ_STATUS.EMPTY});
+      this.status = QUIZ_STATUS.EMPTY,
+      this.validate = false});
 
   @override
   List<Object> get props => [quiz, answers];

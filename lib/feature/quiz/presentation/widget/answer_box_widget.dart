@@ -6,7 +6,12 @@ import 'package:flutter/material.dart';
 class AnswerBoxWidget extends StatefulWidget {
   final Quiz quiz;
   final Function(String choice)? removeChoice;
-  const AnswerBoxWidget({super.key, required this.quiz, this.removeChoice});
+  final bool validate;
+  const AnswerBoxWidget(
+      {super.key,
+      required this.quiz,
+      this.removeChoice,
+      required this.validate});
 
   @override
   State<AnswerBoxWidget> createState() => _AnswerBoxWidgetState();
@@ -27,16 +32,19 @@ class _AnswerBoxWidgetState extends State<AnswerBoxWidget> {
             child: Wrap(
               alignment: WrapAlignment.start,
               runSpacing: 6.0,
-              children: listTextWidget(this.widget.quiz),
+              children: listTextWidget(
+                  quiz: this.widget.quiz, validate: this.widget.validate),
             ),
           )),
     );
   }
 
-  List<Widget> listTextWidget(Quiz quiz) {
+  List<Widget> listTextWidget({required Quiz quiz, required bool validate}) {
     List<Widget> listWidget = [];
     List<String> splitted = quiz.text.split('|');
     int indexPosition = 0;
+    List<String> sortAnswers = quiz.text.split('|');
+    sortAnswers.removeWhere((item) => !item.contains('#'));
 
     for (String word in splitted) {
       if (word.contains('_')) {
@@ -55,10 +63,21 @@ class _AnswerBoxWidgetState extends State<AnswerBoxWidget> {
         ));
       } else if (word.contains('#')) {
         indexPosition += 1;
+        int position = indexPosition;
         List<String> listWords = word.split('#');
         String rawWord = listWords[1];
         listWidget.add(AnswerChipWidget(
           title: rawWord,
+          customValidator: () {
+            if (sortAnswers.length == quiz.solutions.length || validate) {
+              int correctWordIndex = quiz.solutions[position - 1];
+              int choiceIndex = quiz.choices.indexOf(rawWord);
+              return (correctWordIndex == choiceIndex)
+                  ? QUIZ_STATUS.CORRECT
+                  : QUIZ_STATUS.WRONG;
+            }
+            return null;
+          },
           onSelected: (value) {
             if (this.widget.removeChoice != null) {
               this.widget.removeChoice!(value);

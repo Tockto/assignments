@@ -14,6 +14,7 @@ class QuizCubit extends Cubit<QuizState> {
   QuizCubit({required this.getAllQuizUseCase}) : super(Initial());
   List<Quiz> listQuiz = [];
   int currentQuiz = 0;
+  bool validated = false;
 
   Future<void> getAllQuiz() async {
     emit(Loading());
@@ -28,7 +29,9 @@ class QuizCubit extends Cubit<QuizState> {
     currentQuiz += 1;
     if ((listQuiz.length - 1) == currentQuiz) {
       emit(Loading());
-      emit(Loaded(quiz: listQuiz[currentQuiz], answers: []));
+      validated = false;
+      emit(Loaded(
+          quiz: listQuiz[currentQuiz], answers: [], validate: validated));
     }
   }
 
@@ -48,28 +51,36 @@ class QuizCubit extends Cubit<QuizState> {
     }
 
     if (answerWords.length != quiz.solutions.length) {
+      validated = (answerWords.length == 0) ? false : validated;
       emit(Loaded(
           quiz: Quiz(newText, quiz.choices, quiz.solutions),
-          answers: answerWords));
+          answers: answerWords,
+          validate: validated));
     } else {
       List<String> sortAnswers = newText.split('|');
       sortAnswers.removeWhere((item) => !item.contains('#'));
       QUIZ_STATUS quizStatus = QUIZ_STATUS.EMPTY;
 
-      for (int index in quiz.solutions) {
-        for (String answer in sortAnswers) {
-          if (answer.contains('#${quiz.choices[index]}#')) {
-            quizStatus = QUIZ_STATUS.CORRECT;
-          } else {
-            quizStatus = QUIZ_STATUS.WRONG;
-          }
-        }
+      for (String answer in sortAnswers) {
+        List<String> listWords = answer.split('#');
+        String rawWord = listWords[1];
+        int position = sortAnswers.indexOf(answer);
+        int correctWordIndex = quiz.solutions[position];
+        int choiceIndex = quiz.choices.indexOf(rawWord);
+
+        quizStatus = (quizStatus == QUIZ_STATUS.WRONG)
+            ? QUIZ_STATUS.WRONG
+            : ((correctWordIndex == choiceIndex)
+                ? QUIZ_STATUS.CORRECT
+                : QUIZ_STATUS.WRONG);
       }
+      validated = true;
 
       emit(Loaded(
           quiz: Quiz(newText, quiz.choices, quiz.solutions),
           answers: answerWords,
-          status: quizStatus));
+          status: quizStatus,
+          validate: validated));
     }
   }
 }

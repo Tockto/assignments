@@ -4,6 +4,7 @@ import 'package:assignments/feature/quiz/presentation/bloc/cubit/quiz_cubit.dart
 import 'package:assignments/feature/quiz/presentation/widget/answer_box_widget.dart';
 import 'package:assignments/feature/quiz/presentation/widget/answer_chip_widget.dart';
 import 'package:assignments/feature/quiz/presentation/widget/shake_animation_widget.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +17,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   final animationKey = GlobalKey<ShakeAnimationWidgetState>();
+  final player = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +33,10 @@ class _QuizPageState extends State<QuizPage> {
             if (state is Loaded) {
               if (state.status == QUIZ_STATUS.WRONG) {
                 animationKey.currentState?.shake();
+                player.play(AssetSource('vfx_wrong.mp3'));
               } else if (state.status == QUIZ_STATUS.CORRECT) {
                 context.read<QuizCubit>().nextQuiz();
+                player.play(AssetSource('vfx_correct.mp3'));
               }
             }
           },
@@ -51,6 +55,7 @@ class _QuizPageState extends State<QuizPage> {
                         animationOffset: 10,
                         animationDuration: Duration(milliseconds: 500),
                         child: AnswerBoxWidget(
+                          validate: state.validate,
                           quiz: state.quiz,
                           removeChoice: ((value) => context
                               .read<QuizCubit>()
@@ -65,13 +70,14 @@ class _QuizPageState extends State<QuizPage> {
                       children: state.quiz.choices
                           .map((choice) => AnswerChipWidget(
                                 title: choice,
+                                customValidator: () => null,
                                 isSelected: state.answers.contains(choice),
-                                onSelected: ((value) => context
-                                    .read<QuizCubit>()
-                                    .answerQuiz(
-                                        quiz: state.quiz,
-                                        choice: value,
-                                        answerWords: state.answers)),
+                                onSelected: ((value) {
+                                  context.read<QuizCubit>().answerQuiz(
+                                      quiz: state.quiz,
+                                      choice: value,
+                                      answerWords: state.answers);
+                                }),
                               ))
                           .toList(),
                     ),
