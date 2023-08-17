@@ -15,3 +15,5 @@ pubspec.lock
 .flutter-plugins-dependencies
 .vscode/
 *.config.dart
+coverage/
+*.mocks.dart

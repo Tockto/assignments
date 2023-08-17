@@ -14,6 +14,12 @@ Create a simple quiz app using [this reference](https://assignment.tockto.me/).
 
 1. Generate DI
 
-    ```
     flutter pub run build_runner build --delete-conflicting-outputs
-    ```
+
+2. Flutter Coverage extension
+
+    flutter test --coverage
+
+    brew install lcov
+
+    open coverage/html/index.html
